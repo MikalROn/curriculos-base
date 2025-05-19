@@ -1,0 +1,174 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currículo - Daniel Mendonça Coelho</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+            color: #333;
+            text-align: center; /* Centraliza todo o texto */
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 28px; /* Aumentado de 24px para 28px */
+            margin-bottom: 12px;
+        }
+        h2 {
+            font-size: 22px; /* Aumentado de 18px para 22px */
+            border-bottom: 2px solid #000;
+            padding-bottom: 6px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+        p, li {
+            font-size: 18px; /* Aumentado de 16px para 18px */
+            margin: 6px 0;
+        }
+        .contact-info, .objective, .education, .experience, .courses, .languages, .skills {
+            margin-bottom: 24px;
+        }
+        .contact-info p {
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 20px;
+            display: inline-block; /* Para centralizar a lista */
+            text-align: left; /* Alinhamento interno à esquerda para manter a legibilidade */
+        }
+        ul li {
+            position: relative;
+            margin-bottom: 10px;
+        }
+        ul li:before {
+            content: "✓";
+            position: absolute;
+            left: -20px;
+            color: #000;
+        }
+        .experience p {
+            margin-left: 20px;
+            text-align: left; /* Alinhamento à esquerda para o texto da experiência */
+            display: inline-block; /* Para centralizar o bloco */
+        }
+        .courses ul li p {
+            margin-left: 20px;
+            font-size: 16px; /* Aumentado de 14px para 16px */
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DANIEL MENDONÇA COELHO</h1>
+        <div class="contact-info">
+            <p>Brasileiro, 20 anos, solteiro</p>
+            <p>Endereço: Bairro Sudoeste / Brasília-DF</p>
+            <p>Contato: (61) 99604-8060</p>
+            <p>E-mail: heromom.9010@gmail.com</p>
+        </div>
+
+        <div class="objective">
+            <h2>OBJETIVO</h2>
+            <p>Busco oportunidade na área de tecnologia ou afins</p>
+        </div>
+
+        <div class="education">
+            <h2>FORMAÇÃO</h2>
+            <p>Cursando Análise e Desenvolvimento de Sistemas – UDF (5º semestre)</p>
+        </div>
+
+        <div class="experience">
+            <h2>EXPERIÊNCIAS PROFISSIONAIS</h2>
+            <p><strong>Local:</strong> Grupo Brazilian</p>
+            <p><strong>Cargo:</strong> Estagiário / Auxiliar Administrativo (2021 – atualmente)</p>
+            <p><strong>Atividade:</strong> Iniciei minha trajetória no Grupo Brazilian como estagiário em 2021, e, devido ao bom desempenho, fui efetivado como Auxiliar Administrativo em janeiro de 2022. Nesse período, tenho atuado diretamente no apoio às atividades administrativas, realizando controle e organização de documentos, atendimento ao público interno e externo, alimentação de planilhas, lançamento de dados em sistemas, elaboração de relatórios e suporte às áreas financeira, comercial e operacional. Também contribuo na organização de rotinas diárias, acompanhamento de demandas internas e no cumprimento de prazos e metas estabelecidas. Essa experiência tem sido essencial para o meu desenvolvimento profissional, ampliando minha visão sobre processos corporativos e fortalecendo minha capacidade de trabalhar em equipe e lidar com múltiplas tarefas.</p>
+        </div>
+
+        <div class="courses">
+            <h2>CURSOS E QUALIFICAÇÕES TÉCNICAS/PROJETOS TECNOLÓGICOS</h2>
+            <ul>
+                <li>
+                    <strong>Uni AI</strong>
+                    <p>PWA para auxiliar estudantes e professores usando IA Generativa.</p>
+                    <p>Tecnologias: PHP, Django Rest, Angular, CI/CD, GitHub Actions, PostgreSQL, Stripe</p>
+                </li>
+                <li>
+                    <strong>Área do Aluno</strong>
+                    <p>Plataforma para candidaturas e pagamentos de editais da ANCP.</p>
+                    <p>Impacto: 5.000 acessos e 39 inscrições no primeiro edital.</p>
+                    <p>Tecnologias: Django, Bootstrap, PostgreSQL, Amazon S3, CI/CD, PagSeguro</p>
+                </li>
+                <li>
+                    <strong>API Omie SDK</strong>
+                    <p>SDK Open Source para integração com ERP Omie.</p>
+                    <p>Downloads: 1.446/mês, totalizando mais de 5.000 downloads.</p>
+                    <p>Tecnologias: Python, Requests, Maven, PHP, Web Scraping, API REST</p>
+                </li>
+            </ul>
+        </div>
+
+        <div class="languages">
+            <h2>IDIOMAS</h2>
+            <ul>
+                <li>Inglês Intermediário (Boa leitura e compreensão, pouca prática oral)</li>
+            </ul>
+        </div>
+
+        <div class="skills">
+            <h2>HABILIDADES</h2>
+            <ul>
+                <li>Facilidade em trabalhar em equipe</li>
+                <li>Organização/Responsabilidade</li>
+                <li>Comunicação</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

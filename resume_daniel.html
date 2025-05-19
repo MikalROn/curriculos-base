@@ -1,0 +1,174 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume - Daniel Mendonça Coelho</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+        h2 {
+            font-size: 22px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 6px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+        p, li {
+            font-size: 18px;
+            margin: 6px 0;
+        }
+        .contact-info, .objective, .education, .experience, .courses, .languages, .skills {
+            margin-bottom: 24px;
+        }
+        .contact-info p {
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 20px;
+            display: inline-block;
+            text-align: left;
+        }
+        ul li {
+            position: relative;
+            margin-bottom: 10px;
+        }
+        ul li:before {
+            content: "✓";
+            position: absolute;
+            left: -20px;
+            color: #000;
+        }
+        .experience p {
+            margin-left: 20px;
+            text-align: left;
+            display: inline-block;
+        }
+        .courses ul li p {
+            margin-left: 20px;
+            font-size: 16px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DANIEL MENDONÇA COELHO</h1>
+        <div class="contact-info">
+            <p>Brazilian, 20 years old, single</p>
+            <p>Address: Sudoeste Neighborhood / Brasília-DF, Brazil</p>
+            <p>Phone: +55 (61) 99604-8060</p>
+            <p>Email: heromom.9010@gmail.com</p>
+        </div>
+
+        <div class="objective">
+            <h2>OBJECTIVE</h2>
+            <p>Seeking opportunities in the technology field or related areas</p>
+        </div>
+
+        <div class="education">
+            <h2>EDUCATION</h2>
+            <p>Pursuing a degree in Systems Analysis and Development – UDF (5th semester)</p>
+        </div>
+
+        <div class="experience">
+            <h2>PROFESSIONAL EXPERIENCE</h2>
+            <p><strong>Company:</strong> Grupo Brazilian</p>
+            <p><strong>Position:</strong> Intern / Administrative Assistant (2021 – present)</p>
+            <p><strong>Activities:</strong> I began my journey at Grupo Brazilian as an intern in 2021 and, due to strong performance, was hired as an Administrative Assistant in January 2022. During this period, I have actively supported administrative tasks, including document control and organization, internal and external customer service, spreadsheet management, data entry into systems, report preparation, and support for financial, commercial, and operational departments. I also contribute to organizing daily routines, monitoring internal demands, and meeting deadlines and established goals. This experience has been crucial for my professional development, broadening my understanding of corporate processes and enhancing my ability to work in a team and handle multiple tasks.</p>
+        </div>
+
+        <div class="courses">
+            <h2>COURSES AND TECHNICAL QUALIFICATIONS/TECHNOLOGICAL PROJECTS</h2>
+            <ul>
+                <li>
+                    <strong>Uni AI</strong>
+                    <p>PWA to assist students and teachers using Generative AI.</p>
+                    <p>Technologies: PHP, Django Rest, Angular, CI/CD, GitHub Actions, PostgreSQL, Stripe</p>
+                </li>
+                <li>
+                    <strong>Student Area</strong>
+                    <p>Platform for applications and payments for ANCP notices.</p>
+                    <p>Impact: 5,000 accesses and 39 applications in the first notice.</p>
+                    <p>Technologies: Django, Bootstrap, PostgreSQL, Amazon S3, CI/CD, PagSeguro</p>
+                </li>
+                <li>
+                    <strong>API Omie SDK</strong>
+                    <p>Open Source SDK for integration with Omie ERP.</p>
+                    <p>Downloads: 1,446/month, totaling over 5,000 downloads.</p>
+                    <p>Technologies: Python, Requests, Maven, PHP, Web Scraping, API REST</p>
+                </li>
+            </ul>
+        </div>
+
+        <div class="languages">
+            <h2>LANGUAGES</h2>
+            <ul>
+                <li>Advanced English</li>
+            </ul>
+        </div>
+
+        <div class="skills">
+            <h2>SKILLS</h2>
+            <ul>
+                <li>Strong teamwork abilities</li>
+                <li>Organization/Responsibility</li>
+                <li>Communication</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
