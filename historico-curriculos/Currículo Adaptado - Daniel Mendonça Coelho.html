@@ -1,0 +1,219 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currículo - Daniel Mendonça Coelho</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+        h2 {
+            font-size: 22px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 6px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+        p, li {
+            font-size: 18px;
+            margin: 6px 0;
+        }
+        .contact-info, .objective, .education, .experience, .projects, .skills, .languages {
+            margin-bottom: 24px;
+        }
+        .contact-info p {
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 20px;
+            display: inline-block;
+            text-align: left;
+        }
+        ul li {
+            position: relative;
+            margin-bottom: 10px;
+        }
+        ul li:before {
+            content: "✓";
+            position: absolute;
+            left: -20px;
+            color: #000;
+        }
+        .experience p, .projects p {
+            margin-left: 20px;
+            text-align: left;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DANIEL MENDONÇA COELHO</h1>
+        <div class="contact-info">
+            <p>Brasileiro, 20 anos, solteiro</p>
+            <p>Endereço: Bairro Sudoeste / Brasília-DF</p>
+            <p>Contato: (61) 99604-8060</p>
+            <p>E-mail: heromon.9010@gmail.com</p>
+            <p>GitHub: https://github.com/MikalROn</p>
+            <p>LinkedIn: https://www.linkedin.com/in/daniel-coelho90/</p>
+        </div>
+
+        <div class="objective">
+            <h2>OBJETIVO</h2>
+            <p>Atuar como desenvolvedor na Onze, contribuindo com minha experiência em Python, APIs REST, banco de dados relacionais e automações, além de práticas ágeis e testes automatizados, para desenvolver soluções escaláveis de alta disponibilidade, com foco em inovação e aprendizado contínuo em um ambiente dinâmico de PrevTech.</p>
+        </div>
+
+        <div class="education">
+            <h2>FORMAÇÃO</h2>
+            <p>Cursando Análise e Desenvolvimento de Sistemas – UDF (5º semestre, previsão de conclusão: 2026)</p>
+        </div>
+
+        <div class="experience">
+            <h2>EXPERIÊNCIAS PROFISSIONAIS</h2>
+
+            <div class="job">
+                <h3>Desenvolvedor Web Freelance</h3>
+                <p class="job-details"><strong>Brasília, DF</strong></p>
+                <div class="role">
+                    <p><strong>Cargo:</strong> Desenvolvedor Web Freelance</p>
+                    <p><strong>Período:</strong> 2024 – Atualmente</p>
+                </div>
+                <p><strong>Atividades:</strong></p>
+                <ul>
+                    <li>Desenvolvi e mantenho 7 sistemas web, como maxestagios.com.br e bandigital.com, com foco em alta disponibilidade e escalabilidade.</li>
+                    <li>Implementei pipelines CI/CD com GitHub Actions para deploy eficiente e automatizado.</li>
+                    <li>Integrei APIs REST e configurei campanhas no Meta Business Suite, aumentando conversões em 30%.</li>
+                    <li>Otimizei SEO, UX/UI e responsividade com Python (Django, Flask), JavaScript, HTML e CSS.</li>
+                    <li>Gerenciei bancos de dados PostgreSQL e MySQL, garantindo performance e integridade.</li>
+                </ul>
+            </div>
+
+            <div class="job">
+                <h3>Grupo Brazilian</h3>
+                <p class="job-details"><strong>Rede com 10 lojas de varejo de alimentos e posto de combustível</strong></p>
+                <div class="role">
+                    <p><strong>Cargo:</strong> Auxiliar Administrativo</p>
+                    <p><strong>Período:</strong> Janeiro/2022 – Atualmente</p>
+                </div>
+                <div class="role">
+                    <p><strong>Cargo:</strong> Estagiário Administrativo</p>
+                    <p><strong>Período:</strong> 2021 – Janeiro/2022</p>
+                </div>
+                <p><strong>Atividades:</strong></p>
+                <ul>
+                    <li>Promovido a Auxiliar Administrativo em 2022 por desempenho excepcional.</li>
+                    <li>Desenvolvi automações em Python para otimizar processos financeiros e administrativos.</li>
+                    <li>Integrei sistemas ERP (Omie, Petros) com APIs REST, garantindo operação fluida.</li>
+                    <li>Elaborei relatórios gerenciais com Power BI, apoiando decisões estratégicas.</li>
+                    <li>Colaborei em equipes ágeis, utilizando Trello para gerenciar projetos e prazos.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="projects">
+            <h2>PROJETOS TECNOLÓGICOS RELEVANTES</h2>
+            <ul>
+                <li>
+                    <strong>Uni AI</strong>
+                    <p>PWA para suporte a estudantes e professores com IA generativa, com arquitetura escalável.</p>
+                    <p>Tecnologias: Django Rest, PostgreSQL, Angular, CI/CD, GitHub Actions</p>
+                </li>
+                <li>
+                    <strong>Área do Aluno</strong>
+                    <p>Plataforma para candidaturas e pagamentos, com 5.000 acessos e faturamento de R$20.000+.</p>
+                    <p>Tecnologias: Django, PostgreSQL, Amazon S3, CI/CD, Pandas</p>
+                </li>
+                <li>
+                    <strong>Omie SDK</strong>
+                    <p>SDK Open Source para integração com ERP Omie, com +5.000 downloads no PyPI.</p>
+                    <p>Tecnologias: Python, Requests, API REST</p>
+                </li>
+                <li>
+                    <strong>Max Vagas</strong>
+                    <p>API REST para extração de dados via web scraping, com deploy em ambiente de nuvem.</p>
+                    <p>Tecnologias: FastAPI, Playwright, Railway</p>
+                </li>
+                <li>
+                    <strong>EventSimpleGUI</strong>
+                    <p>Biblioteca Open Source com +97% de cobertura de testes, para interfaces gráficas escaláveis.</p>
+                    <p>Tecnologias: Python, PySimpleGUI, GitHub Actions</p>
+                </li>
+            </ul>
+        </div>
+
+        <div class="skills">
+            <h2>HABILIDADES</h2>
+            <ul>
+                <li>Programação: Python, Java, JavaScript, Django, FastAPI, Spring Boot, Angular</li>
+                <li>Bancos de Dados: PostgreSQL, MySQL, SQLite</li>
+                <li>Cloud: AWS (básico), Railway, CI/CD com GitHub Actions</li>
+                <li>Testes: Testes automatizados, TDD, cobertura de testes (+97% em projetos)</li>
+                <li>APIs: Consumo e criação de REST APIs</li>
+                <li>Automações: Web Scraping (Selenium, Playwright), automação de processos</li>
+                <li>Soft Skills: Comunicação, trabalho em equipe, liderança, proatividade</li>
+                <li>Ferramentas: Docker, Linux (Ubuntu, Arch), Trello, Power BI, Excel</li>
+            </ul>
+        </div>
+
+        <div class="languages">
+            <h2>IDIOMAS</h2>
+            <ul>
+                <li>Inglês Intermediário (leitura e compreensão avançadas, conversação em desenvolvimento)</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
